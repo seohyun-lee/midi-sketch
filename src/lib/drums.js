@@ -65,10 +65,10 @@ export function generateDrumBars(cfg, bars) {
     for (const [lane, steps] of Object.entries(style.lanes)) bar[lane] = [...steps]
 
     if (cfg.energy >= 0.7) {
+      for (const lane of DRUM_LANE_ORDER) bar[lane] = bar[lane].map(v => (v === 1 ? 2 : v))
       if (style.hat16OnHighEnergy) {
         for (let s = 1; s < 16; s += 2) if (bar.hat[s] === 0) bar.hat[s] = 1
       }
-      for (const lane of DRUM_LANE_ORDER) bar[lane] = bar[lane].map(v => (v === 1 ? 2 : v))
     } else if (cfg.energy <= 0.3) {
       for (const lane of DRUM_LANE_ORDER) bar[lane] = bar[lane].map(v => (v === 2 ? 1 : v))
     }

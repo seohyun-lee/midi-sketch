@@ -35,9 +35,11 @@ describe('drums', () => {
     const bars = generateDrumBars({ ...base, energy: 0.2, autoFill: false, autoCrash: false }, 1)
     expect(bars[0].snare[4]).toBe(1)
   })
-  it('energy 높으면 rock8 하이햇이 16분으로', () => {
+  it('energy 높으면 rock8 하이햇이 16분으로 (추가된 음은 약하게 유지)', () => {
     const bars = generateDrumBars({ ...base, energy: 0.9, autoFill: false, autoCrash: false }, 1)
-    expect(bars[0].hat[1]).toBeGreaterThan(0)
+    expect(bars[0].hat[1]).toBe(1)  // 새로 추가된 16분음은 약하게
+    expect(bars[0].hat[0]).toBe(2)  // 기존 강세는 세게
+    expect(bars[0].hat[2]).toBe(2)  // 기존 약박(1)은 세게로 승격
   })
   it('overrides가 최종 적용', () => {
     const bars = generateDrumBars({ ...base, overrides: [{ bar: 0, lane: 'kick', step: 2, value: 2 }] }, 1)
