@@ -73,6 +73,8 @@ const TIMBRE = {
   bass: { type: 'triangle', gain: 0.25 },
 }
 
+const DRUM_TAIL = { 36: 0.2, 38: 0.15, 42: 0.05, 49: 0.8, 48: 0.25, 41: 0.25 }
+
 export function createPlayer() {
   let ctx = null
   let endTimer = null
@@ -82,37 +84,43 @@ export function createPlayer() {
     return ctx
   }
 
-  return {
-    play(song, onEnd) {
-      this.stop()
-      const c = ensureCtx()
-      const secPerTick = 60 / (song.bpm * PPQ)
-      const t0 = c.currentTime + 0.1
-      const tracks = renderSong(song)
-      let lastEnd = 0
-      for (const [name, events] of Object.entries(tracks)) {
-        for (const e of events) {
-          const at = t0 + e.tick * secPerTick
+  function stop() {
+    clearTimeout(endTimer)
+    if (ctx && ctx.state !== 'closed') { ctx.close(); ctx = null }
+  }
+
+  function play(song, onEnd) {
+    stop()
+    const c = ensureCtx()
+    const secPerTick = 60 / (song.bpm * PPQ)
+    const t0 = c.currentTime + 0.1
+    const tracks = renderSong(song)
+    let lastEnd = 0
+    for (const [name, events] of Object.entries(tracks)) {
+      for (const e of events) {
+        const at = t0 + e.tick * secPerTick
+        if (name === 'drums') {
+          drumSound(c, c.destination, e.midi, at, e.vel)
+          lastEnd = Math.max(lastEnd, e.tick * secPerTick + (DRUM_TAIL[e.midi] ?? 0.3))
+        } else {
           const dur = e.dur * secPerTick
           lastEnd = Math.max(lastEnd, e.tick * secPerTick + dur)
-          if (name === 'drums') drumSound(c, c.destination, e.midi, at, e.vel)
-          else tone(c, c.destination, { freq: midiFreq(e.midi), at, dur, ...TIMBRE[name], gain: TIMBRE[name].gain * (e.vel / 100) })
+          tone(c, c.destination, { freq: midiFreq(e.midi), at, dur, ...TIMBRE[name], gain: TIMBRE[name].gain * (e.vel / 100) })
         }
       }
-      endTimer = setTimeout(() => { this.stop(); onEnd?.() }, (lastEnd + 0.3) * 1000)
-    },
-    playChord(chord) {
-      const c = ensureCtx()
-      const at = c.currentTime + 0.05
-      const rootMidi = 48 + ((chord.root) % 12)
-      for (const pc of chordPcs(chord)) {
-        const m = rootMidi + ((pc - chord.root + 12) % 12)
-        tone(c, c.destination, { freq: midiFreq(m), at, dur: 1, type: 'triangle', gain: 0.15 })
-      }
-    },
-    stop() {
-      clearTimeout(endTimer)
-      if (ctx && ctx.state !== 'closed') { ctx.close(); ctx = null }
-    },
+    }
+    endTimer = setTimeout(() => { stop(); onEnd?.() }, (lastEnd + 0.3) * 1000)
   }
+
+  function playChord(chord) {
+    const c = ensureCtx()
+    const at = c.currentTime + 0.05
+    const rootMidi = 48 + (chord.root % 12)
+    for (const pc of chordPcs(chord)) {
+      const m = rootMidi + ((pc - chord.root + 12) % 12)
+      tone(c, c.destination, { freq: midiFreq(m), at, dur: 1, type: 'triangle', gain: 0.15 })
+    }
+  }
+
+  return { play, stop, playChord }
 }
