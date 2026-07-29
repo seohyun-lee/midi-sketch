@@ -18,6 +18,26 @@
     if ($playing) { player.stop(); $playing = false }
     else { $playing = true; player.play($song, () => playing.set(false)) }
   }
+  function exportProject() {
+    const blob = new Blob([JSON.stringify($song, null, 2)], { type: 'application/json' })
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(blob)
+    a.download = `${$song.title || 'sketch'}.json`
+    a.click()
+    URL.revokeObjectURL(a.href)
+  }
+  async function importProject(e) {
+    const file = e.target.files[0]
+    if (!file) return
+    try {
+      const data = JSON.parse(await file.text())
+      if (!data || !Array.isArray(data.sections) || !Array.isArray(data.arrangement)) throw new Error()
+      $song = data
+    } catch {
+      alert('프로젝트 파일을 읽을 수 없어요')
+    }
+    e.target.value = ''
+  }
 </script>
 
 <header>
@@ -30,6 +50,8 @@
     </select>
   </label>
   <label>템포 <input type="number" min="40" max="240" bind:value={$song.bpm} /> BPM</label>
+  <button class="ghost" on:click={exportProject}>저장</button>
+  <label class="ghost file">열기<input type="file" accept=".json" on:change={importProject} /></label>
   <span class="spacer" />
   <button disabled={empty} title={empty ? '곡 배치에 섹션을 추가하세요' : ''} on:click={togglePlay}>
     {$playing ? '■ 정지' : '▶ 재생'}
@@ -48,4 +70,7 @@
   button { background: #4a7dff; color: #fff; border: none; border-radius: 6px; padding: 6px 14px; cursor: pointer; }
   button:disabled { opacity: 0.4; cursor: not-allowed; }
   .export { background: #2ea86b; }
+  .ghost { background: #333a4a; color: #8b93a7; font-size: 12px; }
+  .file { cursor: pointer; padding: 6px 14px; border-radius: 6px; }
+  .file input { display: none; }
 </style>
