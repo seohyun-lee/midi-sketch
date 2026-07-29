@@ -3,6 +3,7 @@
   import { NOTE_NAMES } from '../lib/theory.js'
   import { downloadMidi } from '../lib/midi.js'
   import { isValidSong } from '../lib/model.js'
+  import { createDemoSong } from '../lib/demo.js'
 
   $: empty = $song.arrangement.length === 0
   $: keyOptions = NOTE_NAMES.flatMap((n, root) => [
@@ -28,6 +29,10 @@
     a.click()
     a.remove()
     setTimeout(() => URL.revokeObjectURL(a.href), 10_000)
+  }
+  function loadDemo() {
+    if (!confirm('예시 곡을 불러올까요? 지금 작업 중인 곡은 대체돼요 (⌘Z로 되돌릴 수 있어요)')) return
+    $song = createDemoSong()
   }
   async function importProject(e) {
     const file = e.target.files[0]
@@ -58,6 +63,7 @@
   <button class="ghost" disabled={$historyState.redo === 0} title="다시 실행 (⇧⌘Z)" on:click={redo}>↷</button>
   <button class="ghost" on:click={exportProject}>저장</button>
   <label class="ghost file">열기<input type="file" accept=".json" on:change={importProject} /></label>
+  <button class="ghost" title="J-Rock 예시 곡 불러오기" on:click={loadDemo}>🎸 예시 곡</button>
   <span class="spacer" />
   <button disabled={empty} title={empty ? '곡 배치에 섹션을 추가하세요' : ''} on:click={togglePlay}>
     {$playing ? '■ 정지' : '▶ 재생'}
