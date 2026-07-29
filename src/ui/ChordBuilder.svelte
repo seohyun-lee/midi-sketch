@@ -35,7 +35,7 @@
         </button>
       {/each}
     </div>
-    <div class="sub">록 인기 진행 한번에 넣기 (첫 4마디)</div>
+    <div class="sub">록 인기 진행 한번에 넣기 (섹션 전체 마디에 반복 적용)</div>
     {#each progs as p}
       <button class="prog" on:click={() => dispatch('progression', progressionChords($song.key, p))}>
         {p.name} — {progressionChords($song.key, p).map(chordLabel).join(' → ')}

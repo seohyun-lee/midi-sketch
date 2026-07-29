@@ -16,8 +16,8 @@
     editingSlot = null
   }
   function applyProgression(chords) {
-    // 첫 4마디에 마디당 1개
-    chords.forEach((ch, i) => { if (i < section.bars) section.chords[i * 2] = ch })
+    // 진행을 섹션 전체 마디에 반복 적용 (마디당 1개)
+    for (let b = 0; b < section.bars; b++) section.chords[b * 2] = { ...chords[b % chords.length] }
     $song = $song
     editingSlot = null
   }
