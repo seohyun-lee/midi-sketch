@@ -2,7 +2,19 @@
   import TopBar from './TopBar.svelte'
   import ArrangeLane from './ArrangeLane.svelte'
   import SectionEditor from './SectionEditor.svelte'
+  import { undo, redo } from '../lib/store.js'
+
+  function onKey(e) {
+    const tag = e.target.tagName
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
+    if (!(e.metaKey || e.ctrlKey)) return
+    const k = e.key.toLowerCase()
+    if (k === 'z' && !e.shiftKey) { e.preventDefault(); undo() }
+    else if (k === 'y' || (k === 'z' && e.shiftKey)) { e.preventDefault(); redo() }
+  }
 </script>
+
+<svelte:window on:keydown={onKey} />
 
 <main>
   <TopBar />

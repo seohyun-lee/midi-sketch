@@ -49,6 +49,13 @@
         style="background:{sec.color}" on:click={() => ($selectedSectionId = sec.id)} role="button" tabindex="0"
         on:keydown={e => e.key === 'Enter' && ($selectedSectionId = sec.id)}>
         {sec.name} ({sec.bars}마디)
+        {#if sec.melody.length}
+          <span class="spark" title="멜로디 {sec.melody.length}개 음표">
+            {#each sec.melody as n}
+              <i style="left:{(n.start / (sec.bars * 16)) * 100}%; bottom:{((n.pitch - 60) / 24) * 100}%; width:{Math.max(3, (n.len / (sec.bars * 16)) * 100)}%"></i>
+            {/each}
+          </span>
+        {/if}
         <button class="mini" title="배치에 추가" on:click|stopPropagation={() => appendToArrangement(sec)}>＋</button>
         <button class="mini" title="복제" on:click|stopPropagation={() => duplicateSection(sec)}>⧉</button>
         <button class="mini" title="삭제" on:click|stopPropagation={() => deleteSection(sec)}>✕</button>
@@ -80,6 +87,8 @@
   .chip { padding: 6px 10px; border-radius: 6px; font-size: 13px; cursor: pointer; display: inline-flex; gap: 4px; align-items: center; }
   .chip.selected { outline: 2px solid #ff7a9c; }
   .mini { background: rgba(0,0,0,0.25); border: none; color: #fff; border-radius: 4px; cursor: pointer; font-size: 11px; padding: 1px 5px; }
+  .spark { position: relative; width: 46px; height: 16px; background: rgba(0,0,0,0.3); border-radius: 3px; display: inline-block; overflow: hidden; }
+  .spark i { position: absolute; height: 2px; background: #ffd166; border-radius: 1px; }
   .add { border: 1px dashed #555e70; background: transparent; color: #8b93a7; border-radius: 6px; padding: 6px 12px; cursor: pointer; }
   .hint { font-size: 12px; color: #666e80; }
 </style>

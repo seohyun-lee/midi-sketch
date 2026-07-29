@@ -1,5 +1,5 @@
 <script>
-  import { song, player, playing } from '../lib/store.js'
+  import { song, player, playing, undo, redo, historyState } from '../lib/store.js'
   import { NOTE_NAMES } from '../lib/theory.js'
   import { downloadMidi } from '../lib/midi.js'
   import { isValidSong } from '../lib/model.js'
@@ -54,6 +54,8 @@
   </label>
   <label>템포 <input type="number" min="40" max="240" value={$song.bpm}
     on:change={e => ($song.bpm = Math.min(240, Math.max(40, Number(e.target.value) || 140)))} /> BPM</label>
+  <button class="ghost" disabled={$historyState.undo === 0} title="실행 취소 (⌘Z)" on:click={undo}>↶</button>
+  <button class="ghost" disabled={$historyState.redo === 0} title="다시 실행 (⇧⌘Z)" on:click={redo}>↷</button>
   <button class="ghost" on:click={exportProject}>저장</button>
   <label class="ghost file">열기<input type="file" accept=".json" on:change={importProject} /></label>
   <span class="spacer" />
