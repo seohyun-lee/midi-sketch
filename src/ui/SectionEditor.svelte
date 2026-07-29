@@ -1,6 +1,7 @@
 <script>
   import { song, selectedSectionId } from '../lib/store.js'
   import ChordLane from './ChordLane.svelte'
+  import MelodyGrid from './MelodyGrid.svelte'
   import GuitarLane from './GuitarLane.svelte'
   import BassLane from './BassLane.svelte'
   import DrumLane from './DrumLane.svelte'
@@ -30,6 +31,7 @@
       </label>
     </div>
     <ChordLane {section} />
+    <MelodyGrid {section} />
     <GuitarLane {section} />
     <BassLane {section} />
     <DrumLane {section} />
