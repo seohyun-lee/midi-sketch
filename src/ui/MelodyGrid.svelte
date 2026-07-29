@@ -106,7 +106,8 @@
   </div>
   {#each PITCHES as pitch}
     <div class="row" class:octave={pitch % 12 === 0}>
-      <span class="name">{pitchName(pitch)}</span>
+      <button class="key" class:black={NOTE_NAMES[pitch % 12].includes('♯')}
+        on:mousedown={() => player.playNote(pitch)} title="눌러서 소리 듣기">{pitchName(pitch)}</button>
       {#each Array(totalSteps) as _, step}
         {@const note = noteMap.get(pitch * 1000 + step)}
         {@const cls = classify(pitch, chords[Math.floor(step / 8)] ?? null, $song.key)}
@@ -137,6 +138,11 @@
   .row.octave { border-bottom: 1px solid #454e63; }
   .name { width: 65px; font-size: 11px; color: #8b93a7; text-align: right; padding-right: 5px; flex-shrink: 0;
     position: sticky; left: 0; background: #242833; z-index: 1; }
+  .key { width: 65px; height: 17px; font-size: 9px; text-align: right; padding: 0 5px 0 0; flex-shrink: 0;
+    position: sticky; left: 0; z-index: 1; border: none; cursor: pointer;
+    background: #e8eaf0; color: #1a1d24; border-radius: 2px 0 0 2px; box-sizing: border-box; }
+  .key.black { background: #2a2f3a; color: #8b93a7; }
+  .key:active { background: #ffd166; color: #1a1d24; }
   .barnum { width: 175px; flex-shrink: 0; font-size: 10px; color: #8b93a7; }
   .cell { width: 10px; height: 17px; border: none; border-radius: 2px; cursor: pointer; padding: 0; flex-shrink: 0; }
   .cell.chord { background: #3d4b3a; }
