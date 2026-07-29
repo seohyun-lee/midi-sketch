@@ -1,10 +1,11 @@
 <script>
   import TopBar from './TopBar.svelte'
+  import ArrangeLane from './ArrangeLane.svelte'
 </script>
 
 <main>
   <TopBar />
-  <!-- ArrangeLane, SectionEditor는 이후 태스크에서 추가 -->
+  <ArrangeLane />
 </main>
 
 <style>
