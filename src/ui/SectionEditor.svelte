@@ -2,6 +2,8 @@
   import { song, selectedSectionId } from '../lib/store.js'
   import ChordLane from './ChordLane.svelte'
   import GuitarLane from './GuitarLane.svelte'
+  import BassLane from './BassLane.svelte'
+  import DrumLane from './DrumLane.svelte'
 
   $: section = $song.sections.find(s => s.id === $selectedSectionId)
 
@@ -29,6 +31,8 @@
     </div>
     <ChordLane {section} />
     <GuitarLane {section} />
+    <BassLane {section} />
+    <DrumLane {section} />
   </section>
 {:else}
   <section class="empty">섹션을 선택하거나 새로 만들어 편집을 시작하세요</section>
