@@ -61,7 +61,7 @@ export function generateBassBars(cfg, chords, bars, drumBars) {
     }
     // 경과음: 이 마디의 마지막 코드와 다음 반마디 코드가 다르면 스텝 15를 교체
     if (cfg.autoTransition) {
-      const cur = chords[b * 2 + 1] ?? chords[b * 2]
+      const cur = chords[b * 2 + 1]
       const next = chords[(b + 1) * 2]
       if (cur && next && (next.root !== cur.root || next.quality !== cur.quality)) {
         const passStart = b * 16 + 15

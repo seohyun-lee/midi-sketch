@@ -40,4 +40,8 @@ describe('bass', () => {
     const passing = notes.find(n => n.start === 15)
     expect(passing.pitch).toBe(bassRootMidi(F) - 1)
   })
+  it('무음 반마디에는 autoTransition 경과음도 넣지 않음', () => {
+    const notes = generateBassBars({ ...cfg, autoTransition: true }, [Am, null, F, F], 2, null)
+    expect(notes.find(n => n.start === 15)).toBeUndefined()
+  })
 })
