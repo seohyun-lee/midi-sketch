@@ -41,11 +41,17 @@ Logic Pro 인터페이스가 어려운 사용자가 **곡 전체(멜로디+코�
   - 직접 만들기 탭: 루트(12음) × 종류(메이저/마이너/7/m7/maj7/sus4/add9/파워5/dim) × 분수코드 베이스음
 - 코드 미리 듣기, 키와 어울리는 코드에 ★ 표시 (어울리지 않아도 선택은 허용)
 
-**기타 레인 / 베이스 레인**
-- 마디마다 패턴 프리셋 선택 (파워코드 8비트, 뮤트 스타카토, 아르페지오, 스트로크 등 / 베이스: 루트 8비트, 옥타브, 워킹 등)
+**기타 레인**
+- 마디마다 패턴 프리셋 선택 (파워코드 8비트, 뮤트 스타카토, 아르페지오, 스트로크 등)
 - 프리셋을 16분음표 스텝 편집기로 커스텀 가능 (온/오프 + 세게/약하게 2단계 벨로시티)
 - 커스텀 패턴 이름 붙여 저장 → 다른 마디/섹션에서 재사용
 - 패턴은 코드 레인의 현재 코드를 따라 음이 자동 결정됨
+
+**베이스 레인 (자동 생성 기본, 드럼과 동일한 UX)**
+- 스타일 선택: 루트 8비트 드라이브, 옥타브 펌핑, 킥 따라가기(드럼 킥과 리듬 동기화), 워킹, 코드 아르페지오 (각각 미리 듣기)
+- 에너지 슬라이더 + 섹션 연결음 자동(다음 코드로 넘어가기 직전 경과음) 옵션
+- 코드 진행을 따라 음이 자동 결정, 생성 결과는 스텝 그리드로 표시 — 미세 수정 옵션(필수 아님)
+- 원하면 기타처럼 수동 패턴/커스텀 모드로 전환 가능
 
 **드럼 레인 (자동 생성 중심)**
 - 스타일 선택: 록 8비트, 록 16비트, 하프타임, 펑크 질주, 탐 그루브 (각각 미리 듣기)
@@ -79,8 +85,10 @@ Logic Pro 인터페이스가 어려운 사용자가 **곡 전체(멜로디+코�
 
 ```
 Song { title, key: {root, mode}, bpm, sections: Section[], arrangement: sectionId[] }
-Section { id, name, color, bars, chords: ChordSlot[], guitar: PatternRef[], bass: PatternRef[],
-          drums: DrumConfig, melody: Note[] }
+Section { id, name, color, bars, chords: ChordSlot[], guitar: PatternRef[],
+          bass: BassConfig, drums: DrumConfig, melody: Note[] }
+BassConfig { mode: 'auto'|'manual', style, energy(0..1), autoTransition: bool,
+             patterns?: PatternRef[], overrides: {step, value}[] }
 ChordSlot { position(반마디 단위), root, quality, bassNote? }
 PatternRef { presetId | customId }  // 마디당 1개
 CustomPattern { id, name, track, steps: (0|1|2)[16] }  // 2=세게
