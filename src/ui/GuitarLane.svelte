@@ -40,7 +40,7 @@
 </script>
 
 <div class="label">기타 — 마디마다 패턴 선택, 프리셋을 스텝 단위로 수정 가능</div>
-<div class="grid" style="grid-template-columns: repeat({section.bars}, 1fr)">
+<div class="grid" style="grid-template-columns: repeat({section.bars}, 175px)">
   {#each section.guitar as slot, bar}
     <select value={slotValue(slot)} on:change={e => onSelect(bar, e)}>
       {#each GUITAR_PRESETS as p}<option value={'p:' + p.id}>{p.name}</option>{/each}
@@ -63,7 +63,7 @@
 
 <style>
   .label { font-size: 12px; color: #8b93a7; }
-  .grid { display: grid; gap: 4px; }
+  .grid { display: grid; gap: 1px; margin-left: 71px; overflow-x: auto; }
   select { background: #3a4258; color: #e8eaf0; border: none; border-radius: 5px; padding: 6px 4px; font-size: 12px; }
   .editor { background: #2c3140; border: 1px solid #454e63; border-radius: 8px; padding: 10px; margin-top: 6px; }
   .row { display: flex; gap: 6px; margin-top: 8px; }

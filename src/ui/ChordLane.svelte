@@ -24,7 +24,7 @@
 </script>
 
 <div class="label">코드 — 칸 클릭으로 선택 (반마디 단위)</div>
-<div class="grid" style="grid-template-columns: repeat({section.bars * 2}, 1fr)">
+<div class="grid" style="grid-template-columns: repeat({section.bars * 2}, 87px)">
   {#each resolved as chord, slot}
     <button class="slot" class:own={section.chords[slot]} class:carry={!section.chords[slot] && chord}
       on:click={() => (editingSlot = slot)}>
@@ -46,7 +46,7 @@
 
 <style>
   .label { font-size: 12px; color: #8b93a7; }
-  .grid { display: grid; gap: 4px; }
+  .grid { display: grid; gap: 1px; margin-left: 71px; overflow-x: auto; }
   .slot { background: #333a48; border: none; color: #8b93a7; border-radius: 5px; padding: 8px 2px; font-size: 13px; cursor: pointer; position: relative; }
   .slot.own { background: #4a5470; color: #fff; }
   .slot.carry { color: #666e80; font-style: italic; }

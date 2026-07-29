@@ -15,9 +15,16 @@
 
   $: chords = resolveSectionChords(section, null)
   $: totalSteps = section.bars * 16
+  // 템플릿이 section.melody 변경에 반응하도록 계산형으로 노트 맵 구성 (함수 내부 의존성은 Svelte가 추적 못 함)
+  $: noteMap = (() => {
+    const m = new Map()
+    for (const n of section.melody) {
+      for (let s = n.start; s < n.start + n.len; s++) m.set(n.pitch * 1000 + s, n)
+    }
+    return m
+  })()
 
   const pitchName = m => NOTE_NAMES[m % 12].replace('♯', '#') + (Math.floor(m / 12) - 1)
-  const chordAt = step => chords[Math.floor(step / 8)] ?? null
 
   function noteAt(pitch, step) {
     return section.melody.find(n => n.pitch === pitch && step >= n.start && step < n.start + n.len)
@@ -91,16 +98,23 @@
   </div>
 {/if}
 <div class="wrap" on:mouseup={() => { dragging = null; selecting = null }} on:mouseleave={() => { dragging = null; selecting = null }} role="grid" tabindex="0">
+  <div class="row">
+    <span class="name"></span>
+    {#each Array(section.bars) as _, b}
+      <span class="barnum">{b + 1}마디</span>
+    {/each}
+  </div>
   {#each PITCHES as pitch}
     <div class="row" class:octave={pitch % 12 === 0}>
       <span class="name">{pitchName(pitch)}</span>
       {#each Array(totalSteps) as _, step}
-        {@const note = noteAt(pitch, step)}
-        {@const cls = classify(pitch, chordAt(step), $song.key)}
+        {@const note = noteMap.get(pitch * 1000 + step)}
+        {@const cls = classify(pitch, chords[Math.floor(step / 8)] ?? null, $song.key)}
         <button
           class="cell {cls}"
           class:note={!!note}
           class:beat={step % 16 === 0}
+          class:q={step % 4 === 0 && step % 16 !== 0}
           class:sel={selection && step >= selLo && step <= selHi}
           on:mousedown={e => cellDown(pitch, step, e)}
           on:mouseenter={() => cellEnter(pitch, step)}
@@ -121,14 +135,16 @@
   .wrap { overflow-x: auto; margin-top: 6px; user-select: none; }
   .row { display: flex; gap: 1px; margin-bottom: 1px; align-items: center; }
   .row.octave { border-bottom: 1px solid #454e63; }
-  .name { width: 38px; font-size: 11px; color: #8b93a7; text-align: right; padding-right: 5px; flex-shrink: 0;
+  .name { width: 65px; font-size: 11px; color: #8b93a7; text-align: right; padding-right: 5px; flex-shrink: 0;
     position: sticky; left: 0; background: #242833; z-index: 1; }
+  .barnum { width: 175px; flex-shrink: 0; font-size: 10px; color: #8b93a7; }
   .cell { width: 10px; height: 17px; border: none; border-radius: 2px; cursor: pointer; padding: 0; flex-shrink: 0; }
   .cell.chord { background: #3d4b3a; }
   .cell.scale { background: #333a48; }
   .cell.out { background: #2a2530; }
   .cell.note { background: #ffd166 !important; }
-  .cell.beat { outline: 1px solid #454e63; }
+  .cell.beat { box-shadow: -1px 0 0 #6b7694; }
+  .cell.q { box-shadow: -1px 0 0 #454e63; }
   .cell:hover { outline: 1px solid #ffd166; }
   .cell.sel { box-shadow: inset 0 0 0 100px rgba(126, 200, 255, 0.28); }
   .seltools { display: flex; gap: 6px; align-items: center; font-size: 11px; color: #8b93a7; margin-top: 6px; flex-wrap: wrap; }
@@ -136,5 +152,5 @@
   .seltools button:disabled { opacity: 0.4; cursor: not-allowed; }
   .seltools .hint { color: #666e80; }
   .legend { display: flex; gap: 14px; font-size: 11px; color: #8b93a7; margin-top: 6px; }
-  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; border: 1px solid #454e63; }
 </style>

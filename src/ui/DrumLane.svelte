@@ -60,9 +60,9 @@
   .opt { background: #3a4258; border: none; color: #e8eaf0; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; }
   .opt.on { background: #4a7dff; }
   .result { display: flex; flex-direction: column; gap: 2px; margin-top: 6px; overflow-x: auto; }
-  .lane { display: flex; gap: 6px; align-items: center; }
-  .name { width: 56px; font-size: 11px; color: #8b93a7; text-align: right; flex-shrink: 0; }
-  .bar { display: grid; grid-template-columns: repeat(16, 12px); gap: 1px; }
+  .lane { display: flex; gap: 1px; align-items: center; }
+  .name { width: 65px; font-size: 11px; color: #8b93a7; text-align: right; padding-right: 5px; flex-shrink: 0; }
+  .bar { display: grid; grid-template-columns: repeat(16, 10px); gap: 1px; }
   .cell { height: 14px; border: none; border-radius: 2px; cursor: pointer; padding: 0; }
   .hint { font-size: 11px; color: #666e80; margin-top: 4px; }
 </style>

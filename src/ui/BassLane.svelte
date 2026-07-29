@@ -38,7 +38,7 @@
 {#if chords.every(c => !c)}
   <div class="hint">코드를 먼저 넣으면 베이스가 생성돼요</div>
 {:else}
-  <div class="bar-grid" style="grid-template-columns: repeat({totalSteps}, 12px)">
+  <div class="bar-grid" style="grid-template-columns: repeat({totalSteps}, 10px)">
     {#each stepVels as vel, s}
       <span class="cell" class:beat={s % 16 === 0}
         style:background={vel === 0 ? '#333a48' : '#7ec8ff'} style:opacity={vel === 70 ? 0.55 : 1} />
@@ -51,8 +51,8 @@
   .controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; font-size: 12px; color: #8b93a7; margin-top: 4px; }
   .opt { background: #3a4258; border: none; color: #e8eaf0; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; }
   .opt.on { background: #4a7dff; }
-  .bar-grid { display: grid; gap: 1px; margin-top: 6px; overflow-x: auto; }
+  .bar-grid { display: grid; gap: 1px; margin-top: 6px; margin-left: 71px; overflow-x: auto; }
   .cell { height: 14px; border-radius: 2px; }
-  .cell.beat { outline: 1px solid #454e63; }
+  .cell.beat { box-shadow: -1px 0 0 #6b7694; }
   .hint { font-size: 11px; color: #666e80; margin-top: 4px; }
 </style>
