@@ -31,12 +31,21 @@ export function saveSong(song, storage = globalThis.localStorage) {
   storage.setItem(STORAGE_KEY, JSON.stringify(song))
 }
 
+export function isValidSong(data) {
+  return !!data
+    && Array.isArray(data.sections)
+    && Array.isArray(data.arrangement)
+    && typeof data.bpm === 'number' && Number.isFinite(data.bpm)
+    && !!data.key && typeof data.key.root === 'number'
+    && (data.key.mode === 'major' || data.key.mode === 'minor')
+}
+
 export function loadSong(storage = globalThis.localStorage) {
   try {
     const raw = storage.getItem(STORAGE_KEY)
     if (!raw) return null
     const song = JSON.parse(raw)
-    if (!song || !Array.isArray(song.sections)) return null
+    if (!isValidSong(song)) return null
     return song
   } catch {
     return null

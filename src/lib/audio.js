@@ -81,6 +81,7 @@ export function createPlayer() {
 
   function ensureCtx() {
     if (!ctx || ctx.state === 'closed') ctx = new (window.AudioContext || window.webkitAudioContext)()
+    if (ctx.state === 'suspended') ctx.resume()
     return ctx
   }
 

@@ -37,4 +37,16 @@ describe('model', () => {
     storage.setItem('midi-sketch-song', '{broken')
     expect(loadSong(storage)).toBeNull()
   })
+  it('key/bpm 없는 곡 데이터는 거부', () => {
+    const storage = memStorage()
+    const song = createSong()
+    delete song.key
+    storage.setItem('midi-sketch-song', JSON.stringify(song))
+    expect(loadSong(storage)).toBeNull()
+
+    const song2 = createSong()
+    song2.bpm = 'fast'
+    storage.setItem('midi-sketch-song', JSON.stringify(song2))
+    expect(loadSong(storage)).toBeNull()
+  })
 })

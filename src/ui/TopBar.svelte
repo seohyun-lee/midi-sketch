@@ -2,6 +2,7 @@
   import { song, player, playing } from '../lib/store.js'
   import { NOTE_NAMES } from '../lib/theory.js'
   import { downloadMidi } from '../lib/midi.js'
+  import { isValidSong } from '../lib/model.js'
 
   $: empty = $song.arrangement.length === 0
   $: keyOptions = NOTE_NAMES.flatMap((n, root) => [
@@ -33,7 +34,7 @@
     if (!file) return
     try {
       const data = JSON.parse(await file.text())
-      if (!data || !Array.isArray(data.sections) || !Array.isArray(data.arrangement)) throw new Error()
+      if (!isValidSong(data)) throw new Error()
       $song = data
     } catch {
       alert('프로젝트 파일을 읽을 수 없어요')
@@ -51,7 +52,8 @@
       {/each}
     </select>
   </label>
-  <label>템포 <input type="number" min="40" max="240" bind:value={$song.bpm} /> BPM</label>
+  <label>템포 <input type="number" min="40" max="240" value={$song.bpm}
+    on:change={e => ($song.bpm = Math.min(240, Math.max(40, Number(e.target.value) || 140)))} /> BPM</label>
   <button class="ghost" on:click={exportProject}>저장</button>
   <label class="ghost file">열기<input type="file" accept=".json" on:change={importProject} /></label>
   <span class="spacer" />
