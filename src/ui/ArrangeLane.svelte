@@ -7,8 +7,13 @@
   const byId = id => $song.sections.find(s => s.id === id)
 
   function addSection() {
-    const name = prompt('섹션 이름 (예: 인트로, A멜, 사비)', '새 섹션')
-    if (!name) return
+    // 기본 이름: 사용 안 한 다음 알파벳 (A, B, C...)
+    const used = new Set($song.sections.map(s => s.name))
+    let name = 'A'
+    for (let i = 0; i < 26; i++) {
+      const cand = String.fromCharCode(65 + i)
+      if (!used.has(cand)) { name = cand; break }
+    }
     const sec = createSection(name)
     $song.sections = [...$song.sections, sec]
     $song.arrangement = [...$song.arrangement, sec.id]
