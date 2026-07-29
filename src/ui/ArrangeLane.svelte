@@ -35,7 +35,7 @@
     if (dragIndex === null || dragIndex === i) return
     const arr = [...$song.arrangement]
     const [moved] = arr.splice(dragIndex, 1)
-    arr.splice(i, 0, moved)
+    arr.splice(dragIndex < i ? i - 1 : i, 0, moved)
     $song.arrangement = arr
     dragIndex = null
   }
