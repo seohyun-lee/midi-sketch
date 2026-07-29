@@ -1,11 +1,13 @@
 <script>
   import TopBar from './TopBar.svelte'
   import ArrangeLane from './ArrangeLane.svelte'
+  import SectionEditor from './SectionEditor.svelte'
 </script>
 
 <main>
   <TopBar />
   <ArrangeLane />
+  <SectionEditor />
 </main>
 
 <style>
