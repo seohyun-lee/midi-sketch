@@ -1,5 +1,5 @@
 <script>
-  import { song } from '../lib/store.js'
+  import { song, player } from '../lib/store.js'
   import { NOTE_NAMES, classify } from '../lib/theory.js'
   import { resolveSectionChords } from '../lib/render.js'
 
@@ -23,6 +23,7 @@
     } else {
       section.melody = [...section.melody, { pitch, start: step, len: 1 }]
       dragging = { pitch, start: step }
+      player.playNote(pitch)
     }
     $song = $song
   }
@@ -64,13 +65,15 @@
   .wrap { overflow-x: auto; margin-top: 6px; user-select: none; }
   .row { display: flex; gap: 1px; margin-bottom: 1px; align-items: center; }
   .row.octave { border-bottom: 1px solid #454e63; }
-  .name { width: 34px; font-size: 10px; color: #8b93a7; text-align: right; padding-right: 4px; flex-shrink: 0; }
-  .cell { width: 13px; height: 13px; border: none; border-radius: 2px; cursor: pointer; padding: 0; flex-shrink: 0; }
+  .name { width: 38px; font-size: 11px; color: #8b93a7; text-align: right; padding-right: 5px; flex-shrink: 0;
+    position: sticky; left: 0; background: #242833; z-index: 1; }
+  .cell { width: 19px; height: 17px; border: none; border-radius: 2px; cursor: pointer; padding: 0; flex-shrink: 0; }
   .cell.chord { background: #3d4b3a; }
   .cell.scale { background: #333a48; }
   .cell.out { background: #2a2530; }
   .cell.note { background: #ffd166 !important; }
   .cell.beat { outline: 1px solid #454e63; }
+  .cell:hover { outline: 1px solid #ffd166; }
   .legend { display: flex; gap: 14px; font-size: 11px; color: #8b93a7; margin-top: 6px; }
   .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; }
 </style>

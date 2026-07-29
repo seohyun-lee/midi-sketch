@@ -120,7 +120,7 @@ function drumSound(ctx, dest, midi, at, vel) {
 }
 
 const TIMBRE = {
-  melody: { type: 'square', gain: 0.12 },
+  melody: { type: 'square', gain: 0.25 },
   bass: { type: 'triangle', gain: 0.25 },
 }
 
@@ -157,7 +157,7 @@ export function createPlayer() {
         } else if (name === 'guitar') {
           const dur = e.dur * secPerTick
           lastEnd = Math.max(lastEnd, e.tick * secPerTick + Math.min(dur + 0.4, 2))
-          pluck(c, c.destination, { freq: midiFreq(e.midi), at, dur, gain: 0.3 * (e.vel / 100) })
+          pluck(c, c.destination, { freq: midiFreq(e.midi), at, dur, gain: 0.22 * (e.vel / 100) })
         } else {
           const dur = e.dur * secPerTick
           lastEnd = Math.max(lastEnd, e.tick * secPerTick + dur)
@@ -178,5 +178,10 @@ export function createPlayer() {
     }
   }
 
-  return { play, stop, playChord }
+  function playNote(midi) {
+    const c = ensureCtx()
+    tone(c, c.destination, { freq: midiFreq(midi), at: c.currentTime + 0.02, dur: 0.35, ...TIMBRE.melody })
+  }
+
+  return { play, stop, playChord, playNote }
 }
