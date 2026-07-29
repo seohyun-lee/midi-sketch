@@ -67,7 +67,7 @@
   .row.octave { border-bottom: 1px solid #454e63; }
   .name { width: 38px; font-size: 11px; color: #8b93a7; text-align: right; padding-right: 5px; flex-shrink: 0;
     position: sticky; left: 0; background: #242833; z-index: 1; }
-  .cell { width: 19px; height: 17px; border: none; border-radius: 2px; cursor: pointer; padding: 0; flex-shrink: 0; }
+  .cell { width: 10px; height: 17px; border: none; border-radius: 2px; cursor: pointer; padding: 0; flex-shrink: 0; }
   .cell.chord { background: #3d4b3a; }
   .cell.scale { background: #333a48; }
   .cell.out { background: #2a2530; }
