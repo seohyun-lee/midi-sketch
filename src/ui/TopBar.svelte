@@ -4,6 +4,7 @@
   import { downloadMidi } from '../lib/midi.js'
   import { isValidSong } from '../lib/model.js'
   import { createDemoSong } from '../lib/demo.js'
+  import { MELODY_INSTRUMENTS, melodyInstrument } from '../lib/instruments.js'
 
   $: empty = $song.arrangement.length === 0
   $: keyOptions = NOTE_NAMES.flatMap((n, root) => [
@@ -55,6 +56,11 @@
       {#each keyOptions as k}
         <option value={`${k.root}-${k.mode}`}>{k.label}</option>
       {/each}
+    </select>
+  </label>
+  <label>멜로디 음색
+    <select value={melodyInstrument($song).id} on:change={e => ($song.melodyInstrument = e.target.value)}>
+      {#each MELODY_INSTRUMENTS as i}<option value={i.id}>{i.name}</option>{/each}
     </select>
   </label>
   <label>템포 <input type="number" min="40" max="240" value={$song.bpm}

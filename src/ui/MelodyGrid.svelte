@@ -41,7 +41,7 @@
     } else {
       section.melody = [...section.melody, { pitch, start: step, len: 1 }]
       dragging = { pitch, start: step }
-      player.playNote(pitch)
+      player.playNote(pitch, $song.melodyInstrument)
     }
     $song = $song
   }
@@ -107,7 +107,7 @@
   {#each PITCHES as pitch}
     <div class="row" class:octave={pitch % 12 === 0}>
       <button class="key" class:black={NOTE_NAMES[pitch % 12].includes('♯')}
-        on:mousedown={() => player.playNote(pitch)} title="눌러서 소리 듣기">{pitchName(pitch)}</button>
+        on:mousedown={() => player.playNote(pitch, $song.melodyInstrument)} title="눌러서 소리 듣기">{pitchName(pitch)}</button>
       {#each Array(totalSteps) as _, step}
         {@const note = noteMap.get(pitch * 1000 + step)}
         {@const cls = classify(pitch, chords[Math.floor(step / 8)] ?? null, $song.key)}

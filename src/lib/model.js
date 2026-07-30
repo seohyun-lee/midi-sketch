@@ -1,3 +1,5 @@
+import { DEFAULT_MELODY_INSTRUMENT } from './instruments.js'
+
 export const SECTION_COLORS = ['#5b4a8a', '#3d6b5c', '#6b5c3d', '#8a4a5b', '#3d5c6b', '#6b3d5c']
 const STORAGE_KEY = 'midi-sketch-song'
 let colorIndex = 0
@@ -21,6 +23,7 @@ export function createSong() {
     title: '새 곡',
     key: { root: 9, mode: 'minor' },
     bpm: 140,
+    melodyInstrument: DEFAULT_MELODY_INSTRUMENT,
     sections: [],
     arrangement: [],
     customPatterns: [],

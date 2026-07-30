@@ -1,6 +1,7 @@
 import { renderSong, PPQ } from './render.js'
 import { DRUM_MIDI } from './drums.js'
 import { chordPcs } from './theory.js'
+import { DEFAULT_MELODY_INSTRUMENT } from './instruments.js'
 
 export function midiFreq(midi) {
   return 440 * Math.pow(2, (midi - 69) / 12)
@@ -120,8 +121,65 @@ function drumSound(ctx, dest, midi, at, vel) {
 }
 
 const TIMBRE = {
-  melody: { type: 'square', gain: 0.25 },
   bass: { type: 'triangle', gain: 0.25 },
+}
+
+// 배음 합성 — partials는 [주파수 배수, 게인] 목록.
+// percussive면 건반을 누르고 있어도 피아노처럼 서서히 감쇠한다.
+function harmonicTone(ctx, dest, { freq, at, dur, gain, type = 'sine', partials, attack = 0.005, release = 0.2, percussive = false }) {
+  const peak = Math.max(0.0002, gain)
+  const g = ctx.createGain()
+  g.gain.setValueAtTime(0.0002, at)
+  g.gain.exponentialRampToValueAtTime(peak, at + attack)
+  if (percussive) {
+    g.gain.exponentialRampToValueAtTime(peak * 0.3, at + Math.max(attack + 0.01, Math.min(0.6, dur)))
+  } else {
+    g.gain.setValueAtTime(peak, at + Math.max(attack, dur - release))
+  }
+  g.gain.exponentialRampToValueAtTime(0.001, at + dur + release)
+  g.connect(dest)
+  const stopAt = at + dur + release + 0.05
+  for (const [mult, pg] of partials) {
+    const osc = ctx.createOscillator()
+    osc.type = type
+    osc.frequency.value = freq * mult
+    const pGain = ctx.createGain()
+    pGain.gain.value = pg
+    osc.connect(pGain).connect(g)
+    osc.start(at)
+    osc.stop(stopAt)
+  }
+}
+
+const MELODY_VOICES = {
+  piano: (ctx, dest, o) => harmonicTone(ctx, dest, {
+    ...o, type: 'sine', partials: [[1, 1], [2, 0.45], [3, 0.2], [4, 0.1], [6, 0.04]],
+    attack: 0.004, release: 0.4, percussive: true, gain: o.gain * 1.15,
+  }),
+  ep: (ctx, dest, o) => harmonicTone(ctx, dest, {
+    ...o, type: 'sine', partials: [[1, 1], [2, 0.3], [4, 0.18], [7, 0.06]],
+    attack: 0.006, release: 0.5, percussive: true,
+  }),
+  lead: (ctx, dest, o) => harmonicTone(ctx, dest, {
+    ...o, type: 'square', partials: [[1, 1]], attack: 0.006, release: 0.1, gain: o.gain * 0.8,
+  }),
+  soft: (ctx, dest, o) => harmonicTone(ctx, dest, {
+    ...o, type: 'triangle', partials: [[1, 1], [2, 0.25], [3, 0.08]], attack: 0.04, release: 0.25,
+  }),
+  organ: (ctx, dest, o) => harmonicTone(ctx, dest, {
+    ...o, type: 'sine', partials: [[1, 1], [2, 0.6], [3, 0.35], [4, 0.45], [8, 0.18]],
+    attack: 0.02, release: 0.12, gain: o.gain * 0.85,
+  }),
+  flute: (ctx, dest, o) => {
+    harmonicTone(ctx, dest, { ...o, type: 'sine', partials: [[1, 1], [2, 0.12], [3, 0.04]], attack: 0.07, release: 0.2 })
+    noise(ctx, dest, { at: o.at, dur: Math.min(0.12, o.dur), filterType: 'highpass', filterHz: 3000, gain: o.gain * 0.12 })
+  },
+  guitar: (ctx, dest, o) => pluck(ctx, dest, { ...o, gain: o.gain * 1.1 }),
+}
+
+function melodyVoice(ctx, dest, instrumentId, opts) {
+  const voice = MELODY_VOICES[instrumentId] ?? MELODY_VOICES[DEFAULT_MELODY_INSTRUMENT]
+  voice(ctx, dest, opts)
 }
 
 const DRUM_TAIL = { 36: 0.2, 38: 0.18, 42: 0.05, 49: 1.2, 48: 0.4, 41: 0.4 }
@@ -158,6 +216,12 @@ export function createPlayer() {
           const dur = e.dur * secPerTick
           lastEnd = Math.max(lastEnd, e.tick * secPerTick + Math.min(dur + 0.4, 2))
           pluck(c, c.destination, { freq: midiFreq(e.midi), at, dur, gain: 0.22 * (e.vel / 100) })
+        } else if (name === 'melody') {
+          const dur = e.dur * secPerTick
+          lastEnd = Math.max(lastEnd, e.tick * secPerTick + dur + 0.5)
+          melodyVoice(c, c.destination, song.melodyInstrument, {
+            freq: midiFreq(e.midi), at, dur, gain: 0.28 * (e.vel / 100),
+          })
         } else {
           const dur = e.dur * secPerTick
           lastEnd = Math.max(lastEnd, e.tick * secPerTick + dur)
@@ -178,9 +242,9 @@ export function createPlayer() {
     }
   }
 
-  function playNote(midi) {
+  function playNote(midi, instrumentId) {
     const c = ensureCtx()
-    tone(c, c.destination, { freq: midiFreq(midi), at: c.currentTime + 0.02, dur: 0.35, ...TIMBRE.melody })
+    melodyVoice(c, c.destination, instrumentId, { freq: midiFreq(midi), at: c.currentTime + 0.02, dur: 0.4, gain: 0.28 })
   }
 
   return { play, stop, playChord, playNote }

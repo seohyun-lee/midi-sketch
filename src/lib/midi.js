@@ -1,4 +1,5 @@
 import { renderSong, PPQ } from './render.js'
+import { melodyInstrument } from './instruments.js'
 
 function vlq(n) {
   const bytes = [n & 0x7f]
@@ -42,7 +43,7 @@ export function buildMidi(song) {
   const bytes = [
     ...str('MThd'), ...u32(6), ...u16(1), ...u16(5), ...u16(PPQ),
     ...meta,
-    ...noteTrack('Melody', melody, 0, 81),
+    ...noteTrack('Melody', melody, 0, melodyInstrument(song).gm),
     ...noteTrack('Guitar', guitar, 1, 30),
     ...noteTrack('Bass', bass, 2, 34),
     ...noteTrack('Drums', drums, 9, null),
